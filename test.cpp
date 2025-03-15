@@ -4,7 +4,6 @@ using namespace std;
 
 class Model;
 class Layer;
-class AdversarialModel;
 class Linear;
 class ReLU;
 class Sigmoid;
@@ -97,38 +96,6 @@ public:
 		}
 	}
 };
-
-
-class AdversarialModel{
-public:
-	int inputRandomCount,inputCount,outputCount;
-	Model *generator,*discriminator;
-	AdversarialModel(int _inputRandomCount,int _inputCount,int _outputCount,
-			Model *_generator,Model *_discriminator){
-		inputRandomCount=_inputRandomCount;
-		inputCount=_inputCount;
-		outputCount=_outputCount;
-		generator=_generator;
-		discriminator=_discriminator;
-		generator->loss=
-	}
-	void backward(vector<double>& in,vector<double>& randIn,vector<double>& target,
-			const double speed){
-		const vector<double> firstLossTarget({1.0,0.0}),secondLossTarget({0.0,1.0});
-		vector<double> fullGenIn=in+randIn;
-		vector<double> generated=generator->forward(fullGenIn);
-		bool realInput=rand()&1;//false: gen+real true:real+gen
-		vector<double> fullDisIn=(realInput?target+generated:generated+target);
-		vector<double> probabilities=discriminator->forward(fullDisIn);
-		double generatorLoss=CrossEntropyLoss(probabilities,
-			(realInput?secondLossTarget:firstLossTarget)
-		);
-		double discriminatorLoss=CrossEntropyLoss(probabilities,
-			(realInput?firstLossTarget:secondLossTarget)
-		);
-	}
-};
-
 
 //Layers
 
